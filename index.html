@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Panes del Mundo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      display: flex;
+      height: 100vh;
+    }
+
+    #map {
+      flex: 1;
+      height: 100vh;
+    }
+
+    #info-panel {
+      width: 0;
+      transition: width 0.3s ease;
+      background: #ffffff;
+      overflow-x: hidden;
+      padding: 0;
+      box-shadow: -2px 0 5px rgba(0,0,0,0.2);
+      z-index: 1;
+    }
+
+    #info-panel.active {
+      width: 35%;
+      padding: 20px;
+    }
+
+    #info-panel h2 {
+      margin-top: 0;
+    }
+
+    #info-panel img {
+      width: 100%;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 768px) {
+      #info-panel.active {
+        width: 100%;
+        height: 50vh;
+        overflow-y: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div id="info-panel"></div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map').setView([20, 0], 2);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    const panes = [
+      {
+        nombre: 'Pan Baozi',
+        ubicacion: [35.8617, 104.1954],
+        pais: 'China',
+        descripcion: 'Tipo de bollo de pan relleno y cocido al vapor.',
+        bandera: 'https://flagcdn.com/w40/cn.png',
+        imagen: 'https://firebasestorage.googleapis.com/v0/b/collegeone-parents-app.appspot.com/o/breads%2F85d675ee-376b-401b-b8fc-5ff28bfe4e72.JPG?alt=media&token=82234f06-5d63-4ffb-8a94-ace82f491caf', // Aquí pones la URL de la imagen del pan cuando la tengas
+        ingredientes: [
+          "Harina de trigo",
+          "Agua",
+          "Azúcar",
+          "Aceite vegetal",
+          "Levadura",
+          "Cerdo picado",
+          "Cebolleta",
+          "Dientes de ajo",
+          "Jengibre",
+          "Salsa de soya",
+          "Maicena",
+          "Aceite de sésamo",
+          "Pimienta blanca",
+          "Sal"
+        ],
+        preparacion: `- Picamos la cebolleta, rallamos el jengibre y el ajo y reservamos para luego.
+- En un bol ponemos cerdo picado, salsa de soja ligera, sal, azúcar, pimienta blanca, un chorrito de aceite de sésamo, maicena y lo mezclamos muy bien haciendo un movimiento circular durante 5 minutos.
+- Añadimos la cebolleta, el ajo y jengibre y volvemos a mezclar con el mismo movimiento durante 10 minutos más hasta que se quede pegajoso.
+- Tapamos y dejamos marinar en la nevera durante 2 horas.
+- Para la masa:
+  - En un bol ponemos la harina, levadura en polvo y lo mezclamos.
+  - En agua tibia ponemos la levadura de panadería y la mezclamos bien.
+  - Le añadimos azúcar, aceite vegetal y mezclamos todo bien hasta que el azúcar se disuelva y se lo añadimos a la harina.
+  - Mezclamos muy bien y cuando la harina haya absorbido todo el líquido empezamos a trabajar la masa con la mano.
+  - Cuando el bol se quede limpio pasamos la masa a una superficie lisa y amasamos unos 5 minutos más.
+  - Dejamos reposar la masa en un bol cubierta con film hasta que doble su tamaño. Tardará de unos 45 minutos a 1 hora y media dependiendo de la temperatura ambiente.
+- Para hacer el «Baozi»:
+  - Sacamos la masa del bol y la volvemos a trabajar otros 5 minutos más, para quitar todo el aire.
+  - Formamos un cilindro y lo cortamos en 8 piezas iguales y hacemos unas bolitas.
+  - Cogemos una bola y tapamos el resto para que no se sequen, enharinamos un poco y la aplastamos, con la ayuda de un rodillo vamos formando un disco.
+  - Sacamos el relleno de la nevera y lo separamos en 8 partes iguales, haciendo una bola.
+  - Ponemos una de relleno en el centro de cada disco de nuestra masa y empezamos a hacer pliegues uno a uno apretando muy bien para que no se despegue, cuando lleguemos al final lo cerramos muy bien.
+  - Les ponemos un papel de horno abajo y dejamos reposar en la olla vaporera unos 45 minutos.
+  - Cocinamos al vapor en agua hirviendo durante 15 minutos.
+  - Apagamos el fuego y para evitar que el Baozi se deshinche, abrimos un poco la tapa y dejamos reposar unos 5 minutos. Y ya está listo para servir.
+- Se considera un plato de buena suerte, se consume en celebraciones y se regala en ocasiones especiales, como bodas o exámenes.
+- Se dice que fue inventado por el estratega militar Zhuge Liang en el siglo III para usarlo como ofrenda a los dioses y luego para aliviar enfermedades de sus soldados.`
+      },
+      {
+        nombre: 'Pan Damper',
+        ubicacion: [-25.2744, 133.7751],
+        pais: 'Australia',
+        descripcion: 'Es un tipo de pan muy sencillo de preparar y con ingredientes simples y tiene un modo de cocción tradicional que se cocinaba en las brasas del fuego dentro de una olla de hierro.',
+        bandera: 'https://flagcdn.com/w40/au.png',
+        imagen: 'https://firebasestorage.googleapis.com/v0/b/collegeone-parents-app.appspot.com/o/breads%2F53dd53f8-6d43-48ef-b40c-8794cd56eb2a.JPG?alt=media&token=dd737b25-30f1-42f3-a8a6-ed42d0ebb082', // Aquí puedes agregar la imagen del pan Damper cuando la tengas
+        ingredientes: [
+          "450 gr de harina para hacer pan",
+          "1 cucharada de aceite de oliva virgen extra",
+          "½ cucharadita de sal",
+          "225 ml de agua tibia",
+          "3 ramitas de romero",
+          "75 gr de aceitunas sin hueso",
+          "Aceite de oliva trufado",
+          "Vinagre balsámico"
+        ],
+        preparacion: `- Precalentar el horno a 200 grados.
+- En un bol grande, agregar la harina, sal y la cucharada de aceite de oliva. Añadir, también, las ramitas de romero previamente picadas finamente.
+- Mezclar todos estos ingredientes y hacer un hueco en el centro para agregar el agua tibia. Remover con suavidad hasta integrar por completo y obtener una masa manejable para sacar del bol.
+- Una vez fuera del bol, proceder a darle a la masa una forma de torta plana y agregar las aceitunas sin hueso previamente picadas.
+- Seguidamente, doblar los bordes de la masa hasta que las aceitunas queden completamente cubiertas. A continuación, continuar dándole forma al pan hasta obtener una pelota.
+- Con la ayuda de una cuchara de madera, hacerle unas marcas sutiles al pan. Se le deben hacer cuatro marcas similares aun reloj de arena. Esto es importante para facilitar el corte del pan cuando esté cocido.
+- Finalmente, llevar al horno durante 30 minutos.
+- Transcurrido el tiempo anterior, sacar del horno y servir caliente junto al vinagre balsámico y el aceite de oliva trufado.
+- Originado entre los colonos europeos y popularizado por los trabajadores rurales, como los "swagmen" (trabajadores nómadas), vaqueros y pastores que recorrían el interior del país.`
+      },
+      // Aquí puedes continuar agregando más panes sin borrar los anteriores
+      {
+  nombre: 'Marraqueta',
+  ubicacion: [-33.4489, -70.6693],
+  pais: 'Chile',
+  imagen:'https://firebasestorage.googleapis.com/v0/b/collegeone-parents-app.appspot.com/o/breads%2Fbdba17e5-b488-4aa2-88e9-f7717b5e28a9.JPG?alt=media&token=17c53e85-bfc8-44a9-acfc-0095ec6acac6',
+  descripcion: 'Conjunto de varios panes pequeños que se cuecen en una sola pieza y pueden después separarse con facilidad.',
+  bandera: 'https://flagcdn.com/w40/cl.png',
+  ingredientes: [
+    "1 kg de Harina Selecta sin Polvos de hornear",
+    "600 ml de agua a temperatura ambiente",
+    "20 g sal",
+    "15 g de levadura granulada",
+    "1 cdta. de azúcar"
+  ],
+  preparacion: `- Disolver la levadura con agua tibia y dejar reposar junto con el azúcar por 15 minutos y precalentar el horno a 220 grados.
+- Hacer un volcán con la harina y la sal. Agregar la levadura y el agua, y amasar hasta conseguir una masa uniforme y lisa que sea fácil de manipulación. Se debe amasar por lo menos cinco minutos.
+- Dejar la masa reposar en un bol aceitado y tapar con film práctico por 30 minutos.
+- Luego, dividir la masa en porciones que darán forma a este clásico chileno. Se deben formar esferas y nuevamente se debe dejar reposar por 20 minutos.
+- Luego se deben unir dos esferas y amasarlas levemente para que tomen una forma más estirada. Cuando formen un 8 dividimos por la vertical con un palito o cuchara de palo, dejando una marca medio.
+- Pintamos el pan con un poco de aceite y dejamos reposar nuevamente por unos 30 minutos.
+- Hornear a 220 grados por 15 minutos o hasta que las marraquetas estén doradas por encima.
+- Para lograr mayor crocancia, poner en el horno un vaso con agua en un recipiente apto para así lograr más vapor.
+
+Una teoría sostiene que un dúo de hermanos llamados "Marraquette" llegó de Francia y horneó este pan, que posteriormente se llamó marraqueta.
+
+La marraqueta es importante para la nación chilena, hacen organizaciones para buscar quien hace la mejor. Parte del desayuno o la merienda, con puré de aguacate encima, una tradición que la gente recuerda de su infancia.`
+},
+      {
+  nombre: 'Khachapuri',
+  ubicacion: [41.7151, 44.8271],
+  pais: 'Georgia',
+  imagen:'https://firebasestorage.googleapis.com/v0/b/collegeone-parents-app.appspot.com/o/breads%2F8f2f0d8c-177e-4a42-b73e-e1bab3297f28.JPG?alt=media&token=ef6ce0e0-529b-4cfd-bc1a-a10402d32b6f',
+  descripcion: `Es una especie de pan relleno de queso que puede adoptar varias formas y variaciones regionales.
+Principalmente el queso sulguni o imeruli, que tienen textura semiblanda y sabor ligeramente salado.
+Su origen etimológico proviene de la palabra khacha, que significa 'queso cuajado' y 'puri' que significa pan.
+Es un elemento central en la cultura georgiana, reflejando valores como la hospitalidad, la familia y la unidad, así como la historia y el orgullo regional.`,
+  bandera: 'https://flagcdn.com/w40/ge.png',
+  ingredientes: [
+    "250 g de harina",
+    "1½ cucharadita de polvo de hornear",
+    "200 g de yogur",
+    "1 cucharada de azúcar",
+    "1 cucharada de aceite de oliva",
+    "100 ml de leche tibia",
+    "2 pizcas de pimienta blanca",
+    "½ cucharadita de sal",
+    "200 g de queso feta rallado",
+    "150 g de mozzarella rallada",
+    "100 g de ricotta o 150 g de queso Gouda rallado",
+    "2 cucharadas de yogur natural",
+    "Pimienta al gusto",
+    "Sal al gusto",
+    "Huevos + mantequilla (solo para el adjaruli khachapuri)"
+  ],
+  preparacion: `Masa:
+1. Mezcle todos los ingredientes secos en un bol usando una cuchara.
+2. Agregue el yogur y el aceite, y amase agregando la leche gradualmente, hasta que esté suave y ligero.
+3. Forme una bola, cubra con una envoltura de plástico y refrigere durante 1 hora.
+4. Mezcle todos los ingredientes para el relleno (excepto la mantequilla y los huevos) y reserve.
+
+Modelado y preparación del imeruli khachapuri:
+1. Divida la masa en 8 bolas del mismo tamaño.
+2. Extienda cada bola de masa en un círculo de 25 cm de diámetro.
+3. Coloque el relleno en el centro del círculo.
+4. Doble los bordes hacia el centro soldando cada lado con el otro.
+5. Voltee la masa del otro lado.
+6. Extienda la masa suavemente con un rodillo de amasar, hasta obtener un círculo de unos 20 cm de diámetro.
+7. No presione demasiado con el rodillo de amasar, ya que podría salir el relleno.
+8. Caliente una sartén antiadherente ligeramente engrasada, a fuego lento.
+9. Coloque un khachapuri y cubra.
+10. Cuando el primer lado esté dorado, dele la vuelta y cocine el otro lado, siempre cubierto con la tapa.
+
+Modelado y preparación del adjaruli khachapuri:
+1. Precaliente el horno a 210°C.
+2. Extienda la masa, dándole la forma de una góndola.
+3. Añada el relleno de queso en el centro.
+4. Con un cepillo, unte los bordes de la góndola con yema de huevo.
+5. Hornee durante 15 a 20 minutos.
+6. Abra el horno, rompa un huevo en el centro de la góndola encima de los quesos fundidos.
+7. Deje cocer el huevo durante unos minutos.
+8. Supervise la cocción del huevo, ya que no debe secarse. La yema debe mantenerse líquida.
+9. Coloque un botón de mantequilla encima cuando el khachapuri salga del horno. Sirva caliente.`
+},
+      {
+  nombre: 'Borodinsky',
+  ubicacion: [55.7558, 37.6173],
+  pais: 'Rusia',
+  imagen:'https://firebasestorage.googleapis.com/v0/b/collegeone-parents-app.appspot.com/o/breads%2F348cf8aa-1fc8-41bb-9b91-ec790efb1370.JPG?alt=media&token=7f58154a-7c61-4a08-9fab-5bbf8a3bc7ff',
+  descripcion: `Se dice que este pan fue creado en conmemoración de la Batalla de Borodinó en 1812, entre el ejército ruso y Napoleón. La receta moderna apareció en la era soviética, donde se estandarizó y popularizó en toda la URSS como símbolo del pan “del pueblo”.`,
+  ingredientes: [
+    "Harina de centeno (integral)",
+    "Harina de trigo",
+    "Malta de centeno (a menudo tostada)",
+    "Agua",
+    "Levadura",
+    "Melaza o miel oscura",
+    "Semillas de cilantro (en la corteza)",
+    "Sal"
+  ],
+  preparacion: `1. Se prepara una esponja de harina de centeno, levadura y agua.
+2. Se añade malta, melaza y sal.
+3. Se incorpora la harina de trigo para mejorar la estructura.
+4. Se deja fermentar.
+5. Se moldea en forma rectangular y se cubre con semillas de cilantro.
+6. Se hornea a temperatura baja para asegurar una cocción profunda sin quemar la melaza.`,
+  aspectosCulturales: [
+    "Considerado el pan más simbólico de Rusia.",
+    "Se asocia con la resistencia del pueblo ruso.",
+    "Tiene un sabor fuerte, ligeramente ácido y dulce, típico de panes fermentados.",
+    "Se sirve tradicionalmente con sopas, embutidos o arenques."
+  ],
+  bandera: 'https://flagcdn.com/w40/ru.png',
+  imagenPan: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Borodinsky_bread_with_coriander.jpg/320px-Borodinsky_bread_with_coriander.jpg'
+},{
+  nombre: 'Concha',
+  ubicacion: [19.4326, -99.1332],
+  pais: 'México',
+  imagen:'https://firebasestorage.googleapis.com/v0/b/collegeone-parents-app.appspot.com/o/breads%2FScreenshot%202025-06-10%20at%205.35.53%E2%80%AFp.m..png?alt=media&token=c677951f-f73c-4c1e-a92a-b7b29d0146cd',
+  descripcion: `La concha es un pan dulce tradicional mexicano que se caracteriza por su forma redonda y una cobertura crujiente y dulce en la parte superior, con un diseño que parece una concha marina.`,
+  ingredientes: [
+    "Harina de trigo",
+    "Azúcar",
+    "Mantequilla",
+    "Levadura",
+    "Huevos",
+    "Leche",
+    "Extracto de vainilla",
+    "Sal"
+  ],
+  preparacion: `1. Se prepara una masa dulce con harina, azúcar, mantequilla, levadura, huevos y leche.
+2. Se deja reposar para que fermente y crezca.
+3. Se forman bolas de masa y se les coloca una capa de cobertura dulce hecha con azúcar, mantequilla y harina.
+4. Con un cuchillo se hacen cortes en la cobertura para simular el diseño de una concha.
+5. Se hornea hasta que estén doradas y esponjosas.`,
+  aspectosCulturales: [
+    "Es uno de los panes más emblemáticos en las panaderías mexicanas.",
+    "Se consume principalmente en el desayuno o la merienda acompañado de café o chocolate caliente.",
+    "Forma parte fundamental de la tradición del pan dulce mexicano y la cultura gastronómica popular."
+  ],
+  bandera: 'https://flagcdn.com/w40/mx.png',
+  imagenPan: 'https://firebasestorage.googleapis.com/v0/b/collegeone-parents-app.appspot.com/o/breads%2FScreenshot%202025-06-10%20at%205.35.53%E2%80%AFp.m..png?alt=media&token=c677951f-f73c-4c1e-a92a-b7b29d0146cd'
+}
+
+
+,
+      {
+  nombre: 'Pan Lactal',
+  ubicacion: [-34.6037, -58.3816],
+  pais: 'Argentina',
+  imagen:'https://firebasestorage.googleapis.com/v0/b/collegeone-parents-app.appspot.com/o/breads%2Faebe6576-af6c-4108-a27e-0c01dc785665.JPG?alt=media&token=ab244daf-d2c0-45e9-9e2e-9172115a0c3a',
+  descripcion: `El pan lactal fue introducido a Argentina a comienzos del siglo XX, influenciado por el modelo del “sliced bread” estadounidense. Rápidamente fue adoptado por las panaderías industriales y caseras argentinas por su textura suave y durabilidad.`,
+  ingredientes: [
+    "Harina de trigo (refinada)",
+    "Leche o leche en polvo",
+    "Agua",
+    "Azúcar",
+    "Manteca o margarina",
+    "Levadura",
+    "Sal"
+  ],
+  preparacion: `1. Se mezclan todos los ingredientes hasta lograr una masa suave y elástica.
+2. Se deja fermentar.
+3. Se divide y se coloca en moldes rectangulares.
+4. Se deja levar nuevamente.
+5. Se hornea en moldes cerrados (para que mantenga forma cuadrada).
+6. Se enfría completamente antes de cortar.`,
+  aspectosCulturales: [
+    "Común en desayunos y meriendas con dulce de leche o mermelada.",
+    "Se asocia a lo “casero” y a la comida para niños.",
+    "Presente en la cultura escolar (sándwiches para la vianda).",
+    "Muy usado también en tostadas y sándwiches triples."
+  ],
+  bandera: 'https://flagcdn.com/w40/ar.png',
+  imagenPan: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Pan_lactal.JPG/320px-Pan_lactal.JPG'
+},
+      {
+  nombre: 'Pan Wawa',
+  ubicacion: [-12.0464, -77.0428],
+  pais: 'Perú',
+  imagen:'https://firebasestorage.googleapis.com/v0/b/collegeone-parents-app.appspot.com/o/breads%2Fc7bc8701-c4f0-42f6-9f7b-40663dba8575.JPG?alt=media&token=7d05b979-41f3-4bec-be21-b561a7a47a10',
+  descripcion: `El Pan Wawa (del quechua wawa, “niño”) es una pieza de pan dulce que se elabora tradicionalmente en forma de bebé envuelto. Es típico del Día de Todos los Santos (1 de noviembre) en regiones andinas del Perú como Cusco, Ayacucho y Arequipa.`,
+  ingredientes: [
+    "Harina de trigo",
+    "Levadura",
+    "Agua",
+    "Azúcar",
+    "Huevos",
+    "Leche",
+    "Manteca o aceite vegetal",
+    "Colorantes naturales (para decorar)",
+    "Frutas confitadas (opcional)"
+  ],
+  preparacion: `1. Se mezcla una masa enriquecida con leche, huevos y azúcar.
+2. Se amasa y fermenta.
+3. Se moldea en forma de figura humana (generalmente bebé).
+4. Se hornea y luego se decora con glaseados de colores y confites.
+5. A veces se pinta el rostro y se viste con ropas de tela.`,
+  aspectosCulturales: [
+    "Representa el renacer y la conexión espiritual con los ancestros.",
+    "Se ofrece como ofrenda en altares junto a flores, frutas y velas.",
+    "Regalar un Pan Wawa es símbolo de afecto y buena voluntad.",
+    "También existe el Pan Caballito para niños varones."
+  ],
+  bandera: 'https://flagcdn.com/w40/pe.png',
+  imagenPan: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Pan_wawa.jpg/320px-Pan_wawa.jpg'
+}
+    ];
+
+    const panel = document.getElementById('info-panel');
+
+    panes.forEach(pan => {
+      const marker = L.marker(pan.ubicacion).addTo(map);
+
+      const popupHTML = `
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <img src="${pan.bandera}" alt="${pan.pais}" style="width: 24px;" />
+          <strong>${pan.nombre}</strong>
+        </div>
+      `;
+
+      marker.bindPopup(popupHTML);
+
+      marker.on('click', () => {
+        panel.classList.add('active');
+        panel.innerHTML = `
+          ${
+            pan.imagen
+              ? `<img src="${pan.imagen}" alt="Imagen de ${pan.nombre}" style="width: 100%; border-radius: 8px; margin-bottom: 15px;">`
+              : ''
+          }
+          <h2>${pan.nombre}</h2>
+          <p><strong>País:</strong> ${pan.pais} <img src="${pan.bandera}" alt="${pan.pais}" style="width: 24px; vertical-align: middle; margin-left: 8px;" /></p>
+          <p><strong>Descripción:</strong> ${pan.descripcion}</p>
+          <p><strong>Ingredientes:</strong></p>
+          <ul>
+            ${
+              pan.ingredientes
+                ? pan.ingredientes.map(i => `<li>${i}</li>`).join('')
+                : '<li>Sin datos</li>'
+            }
+          </ul>
+          <p><strong>Preparación:</strong></p>
+          <pre style="white-space: pre-wrap;">${pan.preparacion ? pan.preparacion : 'Sin datos'}</pre>
+        `;
+      });
+    });
+  </script>
+</body>
+</html>
